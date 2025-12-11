@@ -1,12 +1,12 @@
 const fs = require('fs');
 const path = require('path');
+const { randomUUID } = require('crypto');
 require('dotenv').config({ path: path.join(__dirname, '.env') });
 
 const express = require('express');
 const cors = require('cors');
 const { createServer } = require('http');
 const { WebSocketServer } = require('ws');
-const { v4: uuidv4 } = require('uuid');
 const { getRoomsCollection, closeClient } = require('./db');
 
 const PORT = process.env.PORT || 4000;
@@ -45,7 +45,7 @@ const createInitialState = () => ({
 });
 
 const sanitizePokemon = (pokemon = {}, fallbackSlot = 0) => {
-  const id = typeof pokemon.id === 'string' && pokemon.id ? pokemon.id : uuidv4();
+  const id = typeof pokemon.id === 'string' && pokemon.id ? pokemon.id : randomUUID();
   const rawSpecies =
     typeof pokemon.species === 'string'
       ? pokemon.species
@@ -77,7 +77,7 @@ const sanitizePokemon = (pokemon = {}, fallbackSlot = 0) => {
 };
 
 const sanitizePlayer = (player = {}) => ({
-  id: typeof player.id === 'string' && player.id ? player.id : uuidv4(),
+  id: typeof player.id === 'string' && player.id ? player.id : randomUUID(),
   name: typeof player.name === 'string' ? player.name : '',
   notes: typeof player.notes === 'string' ? player.notes : '',
   team: Array.isArray(player.team)
@@ -148,7 +148,7 @@ const sanitizeEncounterSelection = (value) => {
 
 const sanitizeEncounter = (encounter = {}, players = []) => {
   const playerIds = new Set(players.map((player) => player.id));
-  const id = typeof encounter.id === 'string' && encounter.id ? encounter.id : uuidv4();
+  const id = typeof encounter.id === 'string' && encounter.id ? encounter.id : randomUUID();
   const locationId = typeof encounter.locationId === 'string' && encounter.locationId ? encounter.locationId : null;
 
   const rawSelections =
@@ -200,7 +200,7 @@ const sanitizeState = (incoming, previous) => {
   };
 };
 
-const generateRoomId = () => uuidv4().split('-')[0];
+const generateRoomId = () => randomUUID().split('-')[0];
 
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok' });

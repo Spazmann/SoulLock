@@ -15,7 +15,6 @@
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "mongodb": "^7.0.0",
-    "uuid": "^13.0.0",
     "ws": "^8.18.3"
   },
   "devDependencies": {
