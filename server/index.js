@@ -1,3 +1,4 @@
+const fs = require('fs');
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '.env') });
 
@@ -18,6 +19,10 @@ const MAX_ROOM_NAME_LENGTH = 80;
 const app = express();
 app.use(cors({ origin: true }));
 app.use(express.json());
+
+const CLIENT_DIST_PATH = path.resolve(__dirname, '../client/dist');
+const INDEX_HTML_PATH = path.join(CLIENT_DIST_PATH, 'index.html');
+const HAS_CLIENT_BUILD = fs.existsSync(INDEX_HTML_PATH);
 
 const activeRooms = new Map();
 
@@ -221,6 +226,10 @@ app.post('/rooms', async (_req, res, next) => {
 });
 
 app.get('/rooms/:roomId', async (req, res, next) => {
+  if (HAS_CLIENT_BUILD && (req.headers.accept || '').includes('text/html')) {
+    return res.sendFile(INDEX_HTML_PATH);
+  }
+
   try {
     const { roomId } = req.params;
     const roomsCollection = await getRoomsCollection();
@@ -241,6 +250,35 @@ app.get('/rooms/:roomId', async (req, res, next) => {
     next(error);
   }
 });
+
+if (HAS_CLIENT_BUILD) {
+  app.use(
+    express.static(CLIENT_DIST_PATH, {
+      setHeaders: (res, servedPath) => {
+        if (path.extname(servedPath) === '.html') {
+          res.setHeader('Cache-Control', 'no-cache');
+        }
+      }
+    })
+  );
+
+  app.get('*', (req, res, next) => {
+    if (req.method !== 'GET') {
+      return next();
+    }
+
+    if (req.path === '/health' || req.path.startsWith('/ws')) {
+      return next();
+    }
+
+    const acceptHeader = req.headers.accept || '';
+    if (!acceptHeader.includes('text/html')) {
+      return next();
+    }
+
+    return res.sendFile(INDEX_HTML_PATH);
+  });
+}
 
 const server = createServer(app);
 const wss = new WebSocketServer({ server, path: '/ws' });
