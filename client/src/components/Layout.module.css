@@ -1,0 +1,55 @@
+.appShell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 2rem;
+  backdrop-filter: blur(14px);
+  background-color: rgba(11, 18, 31, 0.88);
+  border-bottom: 1px solid rgba(37, 49, 67, 0.75);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.brand {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-weight: 700;
+  color: #f2f4f7;
+}
+
+.brandAccent {
+  font-size: 1.3rem;
+  color: var(--color-primary);
+}
+
+.brandLabel {
+  font-size: 1rem;
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+
+.nav a:hover {
+  color: #f2f4f7;
+}
+
+.main {
+  flex: 1;
+  width: min(1400px, calc(100vw - 1.5rem));
+  margin: 2rem auto 4rem;
+}

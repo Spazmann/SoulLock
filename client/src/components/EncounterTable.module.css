@@ -1,0 +1,657 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background-color: #111823;
+  border: 1px solid #253143;
+  border-radius: 10px;
+  padding: 20px;
+  color: #f2f4f7;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.tableHeader {
+  display: grid;
+  grid-template-columns: minmax(140px, 0.6fr) minmax(320px, 2.4fr) auto;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.subtitle {
+  margin: 4px 0 0;
+  color: #9da8bb;
+  font-size: 14px;
+}
+
+.addButton {
+  background: linear-gradient(135deg, #4874ff, #7a92ff);
+  color: #0b1024;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.addButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(72, 116, 255, 0.25);
+}
+
+.addButton:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.addButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 32px 20px;
+  background-color: #0d1520;
+  border-radius: 8px;
+  color: #c2ccda;
+  line-height: 1.4;
+}
+
+.rows {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+}
+
+.tableHeader {
+  display: grid;
+  grid-template-columns: minmax(140px, 0.6fr) minmax(320px, 2.4fr) auto;
+  gap: 12px;
+  padding: 0 12px 8px;
+  color: #9aa7bf;
+  font-size: 12px;
+  font-weight: 600;
+  border-bottom: 1px solid #1f2a3a;
+  align-items: flex-end;
+}
+
+.tableHeaderLocation,
+.tableHeaderActions {
+  align-self: flex-end;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.tableHeaderLocation {
+  justify-self: start;
+}
+
+.tableHeaderActions {
+  justify-self: end;
+}
+
+.tableHeaderPlayers {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  align-items: flex-end;
+  justify-items: center;
+}
+
+.tableHeaderTrainer {
+  width: 100%;
+  text-align: center;
+  color: #c1cbdd;
+  font-weight: 600;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: minmax(140px, 0.6fr) minmax(320px, 2.4fr) auto;
+  gap: 12px;
+  padding: 16px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(31, 42, 58, 0.9);
+  background: #0d1520;
+  position: relative;
+}
+
+.rows .row:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: -6px;
+  height: 1px;
+  background: #1f2a3a;
+}
+
+.rowDead {
+  background: linear-gradient(180deg, rgba(78, 17, 29, 0.9), rgba(36, 8, 14, 0.92));
+  border-color: rgba(210, 64, 92, 0.6);
+}
+
+.rowParty {
+  background: linear-gradient(180deg, rgba(18, 44, 66, 0.9), rgba(10, 26, 44, 0.94));
+  border-color: rgba(72, 142, 209, 0.7);
+  box-shadow: 0 18px 40px rgba(12, 34, 56, 0.35);
+}
+
+.locationColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.locationValue {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  color: #f2f4f7;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  cursor: default;
+  user-select: none;
+}
+
+.statusBadge {
+  font-size: 12px;
+  color: #87c2ff;
+}
+
+.errorBadge {
+  font-size: 12px;
+  color: #ff8a8a;
+}
+
+.pokemonColumn {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  align-items: stretch;
+  justify-items: center;
+}
+
+.helperText {
+  margin: 0;
+  color: #7785a0;
+  font-size: 13px;
+}
+
+.pokemonField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 160px;
+  flex: 1 1 160px;
+}
+
+.pokemonSlot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 150px;
+  padding: 8px;
+  border-radius: 10px;
+  border: 1px solid #1b2738;
+  background: #0b1320;
+  position: relative;
+}
+
+.pokemonSlotParty {
+  border-color: rgba(99, 160, 228, 0.75);
+  background: rgba(18, 44, 72, 0.78);
+}
+
+.pokemonLabel {
+  display: none;
+}
+
+.pokemonCircle {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: #0f1a2a;
+  border: 1px dashed #2b3a53;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #a5b5d1;
+  font-size: 24px;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
+}
+
+.pokemonCircle[data-draggable='true'] {
+  cursor: grab;
+  border-style: solid;
+}
+
+.pokemonCircle[data-dragging='true'] {
+  cursor: grabbing;
+  border-color: #4874ff;
+  box-shadow: 0 6px 16px rgba(72, 116, 255, 0.25);
+}
+
+.pokemonCircle[data-dead='true'] {
+  border-color: rgba(210, 64, 92, 0.6);
+  background: rgba(26, 12, 18, 0.8);
+  color: #ff9aa8;
+}
+
+.pokemonCircle[data-party='true'] {
+  border-color: #f1d36c;
+  background: rgba(48, 38, 8, 0.85);
+  box-shadow: 0 0 18px rgba(241, 211, 108, 0.45);
+}
+
+.dragPreview {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #0f1a2a;
+  border: 2px solid #4874ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #a5b5d1;
+  font-size: 26px;
+  font-weight: 600;
+  text-transform: uppercase;
+  box-shadow: 0 12px 24px rgba(5, 12, 24, 0.4);
+  pointer-events: none;
+  position: fixed;
+  top: -9999px;
+  left: -9999px;
+  overflow: hidden;
+}
+
+.dragPreviewImage {
+  width: 48px;
+  height: 48px;
+  image-rendering: pixelated;
+}
+
+.pokemonCircle:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: #4874ff;
+  box-shadow: 0 6px 16px rgba(72, 116, 255, 0.2);
+}
+
+.pokemonCircle:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  border-style: solid;
+}
+
+.pokemonCircleImage {
+  width: 40px;
+  height: 40px;
+  image-rendering: pixelated;
+}
+
+.pokemonCircleIcon {
+  line-height: 1;
+}
+
+.pokemonTooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translate(-50%, -12px);
+  background: rgba(14, 22, 34, 0.92);
+  border: 1px solid rgba(73, 118, 175, 0.6);
+  border-radius: 12px;
+  padding: 8px 12px;
+  color: #f2f4f7;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+  box-shadow: 0 12px 30px rgba(4, 8, 15, 0.45);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.12s ease, transform 0.12s ease;
+  white-space: nowrap;
+}
+
+.pokemonTooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 8px;
+  border-style: solid;
+  border-color: rgba(14, 22, 34, 0.92) transparent transparent transparent;
+  filter: drop-shadow(0 2px 2px rgba(4, 8, 15, 0.4));
+}
+
+.pokemonSlot:hover .pokemonTooltip,
+.pokemonSlot:focus-within .pokemonTooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, -18px);
+}
+
+.pokemonTooltipDead {
+  background: rgba(78, 17, 29, 0.92);
+  border-color: rgba(210, 64, 92, 0.7);
+}
+
+.pokemonTooltipDead::after {
+  border-color: rgba(78, 17, 29, 0.92) transparent transparent transparent;
+}
+
+.tooltipSpecies {
+  font-weight: 600;
+  font-size: 14px;
+  text-transform: capitalize;
+  color: #f4f7fb;
+}
+
+.pokemonTooltipDead .tooltipSpecies {
+  color: #ffd3db;
+}
+
+.tooltipNickname {
+  color: #aab8d3;
+  font-size: 12px;
+}
+
+.pokemonTooltipDead .tooltipNickname {
+  color: #ffb0be;
+}
+
+.nicknameInput:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.selectionCard .nicknameInput {
+  margin-top: 0;
+}
+
+.selectionOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 8, 15, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 1200;
+}
+
+.selectionCard {
+  background: #0d1520;
+  border-radius: 12px;
+  border: 1px solid #1f2a3a;
+  padding: 24px;
+  width: min(380px, 90vw);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  color: #f2f4f7;
+  box-shadow: 0 24px 60px rgba(4, 8, 15, 0.45);
+}
+
+.confirmOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 8, 15, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 1400;
+}
+
+.confirmCard {
+  background: #0d1520;
+  border-radius: 12px;
+  border: 1px solid #1f2a3a;
+  padding: 24px;
+  width: min(340px, 90vw);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  color: #f2f4f7;
+  box-shadow: 0 24px 60px rgba(4, 8, 15, 0.45);
+  text-align: center;
+}
+
+.confirmMessage {
+  margin: 0;
+  color: #cbd7eb;
+  font-size: 14px;
+}
+
+.confirmActions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.selectionHint {
+  margin: -6px 0 0;
+  color: #9da8bb;
+  font-size: 13px;
+}
+
+.selectionSelect {
+  border: 1px solid #1f3048;
+  background: #111c2d;
+  color: #f2f4f7;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+}
+
+.selectionSelect:focus {
+  outline: none;
+  border-color: #4874ff;
+  box-shadow: 0 0 0 3px rgba(72, 116, 255, 0.25);
+}
+
+.selectionSprite {
+  width: 72px;
+  height: 72px;
+  image-rendering: pixelated;
+  align-self: center;
+  border-radius: 10px;
+  background: #0a121f;
+  padding: 8px;
+  border: 1px solid #1f2a3a;
+}
+
+.selectionActions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.clearButton {
+  background: transparent;
+  border: 1px solid #30405a;
+  border-radius: 8px;
+  padding: 8px 16px;
+  color: #cbd7eb;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.clearButton:hover {
+  background-color: #1b2738;
+}
+
+.rowActions {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  justify-content: flex-start;
+}
+
+.reviveRowButton {
+  background: linear-gradient(135deg, #3ecf8e, #6feea6);
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  color: #06121d;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.reviveRowButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(62, 207, 142, 0.3);
+}
+
+.reviveRowButton:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.removeRowButton {
+  background-color: transparent;
+  border: 1px solid #30405a;
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: #cbd7eb;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+
+.removeRowButton:hover {
+  background-color: #1b2738;
+  color: #ffffff;
+}
+
+.pickerOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 8, 15, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 1000;
+}
+
+.pickerCard {
+  background: #0d1520;
+  border-radius: 12px;
+  border: 1px solid #1f2a3a;
+  padding: 24px;
+  width: min(420px, 90vw);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  color: #f2f4f7;
+  box-shadow: 0 24px 60px rgba(4, 8, 15, 0.4);
+}
+
+.pickerHint {
+  margin: 0;
+  color: #9da8bb;
+  font-size: 13px;
+}
+
+.pickerSelect {
+  border: 1px solid #1f3048;
+  background: #111c2d;
+  color: #f2f4f7;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+}
+
+.pickerActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.confirmButton {
+  background: linear-gradient(135deg, #4874ff, #7a92ff);
+  color: #0b1024;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.confirmButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(72, 116, 255, 0.25);
+}
+
+.cancelButton {
+  background: transparent;
+  border: 1px solid #30405a;
+  border-radius: 8px;
+  padding: 8px 16px;
+  color: #cbd7eb;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cancelButton:hover {
+  background-color: #1b2738;
+}
+
+@media (max-width: 900px) {
+  .row {
+    grid-template-columns: 1fr;
+  }
+
+  .tableHeader {
+    display: none;
+  }
+
+  .pokemonColumn {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .tableHeaderPlayers {
+    display: none;
+  }
+
+  .pokemonLabel {
+    display: block;
+    align-self: flex-start;
+    color: #9aa7bf;
+    font-size: 12px;
+  }
+
+  .rowActions {
+    margin-top: 12px;
+  }
+}

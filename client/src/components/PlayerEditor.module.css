@@ -1,0 +1,120 @@
+.card {
+  background: var(--color-surface-elevated);
+  border-radius: 1.25rem;
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  box-shadow: var(--shadow-soft);
+  border: 1px solid rgba(37, 49, 67, 0.6);
+}
+
+.mainRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.playerName {
+  flex: 1 1 200px;
+  border: 1px solid var(--color-input-border);
+  border-radius: 0.75rem;
+  padding: 0.5rem 0.85rem;
+  font-size: 1rem;
+  font-weight: 600;
+  background: var(--color-input-bg);
+  color: inherit;
+}
+
+.playerName:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.selfBadge {
+  background: rgba(58, 181, 74, 0.15);
+  color: #1c7c2c;
+}
+
+.lockedBadge {
+  background: rgba(215, 38, 61, 0.12);
+  color: #d7263d;
+}
+
+.settingsButton {
+  border-radius: 999px;
+  padding: 0.45rem 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid var(--color-input-border);
+  background: var(--color-input-bg);
+  white-space: nowrap;
+}
+
+.settingsButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.settingsButton:not(:disabled):hover {
+  background: rgba(47, 71, 113, 0.25);
+}
+
+.settingsPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.5rem 0 0 0;
+  border-top: 1px solid rgba(55, 74, 106, 0.45);
+}
+
+.settingsActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.actionButton {
+  border-radius: 999px;
+  padding: 0.45rem 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.primaryAction {
+  background: rgba(243, 106, 167, 0.15);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.primaryAction:hover {
+  background: rgba(243, 106, 167, 0.24);
+}
+
+.dangerAction {
+  background: transparent;
+  border-color: rgba(215, 38, 61, 0.45);
+  color: #ff8a96;
+}
+
+.dangerAction:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.dangerAction:not(:disabled):hover {
+  background: rgba(215, 38, 61, 0.18);
+}

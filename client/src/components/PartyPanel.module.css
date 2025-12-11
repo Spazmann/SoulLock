@@ -1,0 +1,329 @@
+.partyDock {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  width: min(720px, calc(100vw - 48px));
+  z-index: 1100;
+}
+
+.dockContent {
+  display: flex;
+  align-items: stretch;
+  gap: 18px;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background-color: #111823;
+  border: 1px solid #253143;
+  border-radius: 12px;
+  padding: 18px 20px 20px;
+  color: #f2f4f7;
+  box-shadow: 0 18px 40px rgba(4, 8, 15, 0.45);
+}
+
+.panelHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.panelTitle {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  color: inherit;
+}
+
+.panelSubtitle {
+  font-size: 13px;
+  color: #9da8bb;
+}
+
+.helperText {
+  margin: 0;
+  font-size: 13px;
+  color: #7785a0;
+}
+
+.slotRow {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.slot {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+}
+
+.slot[data-active='true'] .slotCircle {
+  border-color: #4874ff;
+  box-shadow: 0 0 0 3px rgba(72, 116, 255, 0.2);
+}
+
+.slot[data-filled='true'] .slotCircle {
+  border-color: #304261;
+}
+
+.slot[data-filled='true'][data-status='fainted'] .slotCircle {
+  border-color: rgba(210, 64, 92, 0.55);
+  background: rgba(26, 12, 18, 0.7);
+}
+
+.slotCircle {
+  --circle-size: 70px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--circle-size);
+  height: var(--circle-size);
+  border-radius: 50%;
+  border: 1px solid #1b2738;
+  background: #0f1a2a;
+  cursor: grab;
+  padding: 0;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
+}
+
+.slotCircle[data-status='fainted'] {
+  border-color: rgba(210, 64, 92, 0.6);
+  background: rgba(26, 12, 18, 0.8);
+}
+
+.slotCircle[data-draggable='false'] {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.slotCircle[data-dragging='true'] {
+  cursor: grabbing;
+  border-color: #4874ff;
+  box-shadow: 0 6px 16px rgba(72, 116, 255, 0.25);
+}
+
+.slotCircle:hover[data-draggable='true'] {
+  transform: translateY(-1px);
+  border-color: #4874ff;
+  box-shadow: 0 6px 16px rgba(72, 116, 255, 0.2);
+}
+
+.slotSprite {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  pointer-events: none;
+}
+
+.slotInitial {
+  font-size: 26px;
+  font-weight: 600;
+  color: #a5b5d1;
+  pointer-events: none;
+}
+
+.slotLabel {
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  color: #f2f4f7;
+  text-transform: capitalize;
+}
+
+.graveyard {
+  flex: 0 0 190px;
+  align-self: stretch;
+  border-radius: 10px;
+  padding: 12px 16px;
+  border: 1px dashed rgba(210, 64, 92, 0.5);
+  background: rgba(26, 12, 18, 0.75);
+  color: #ff9aa8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  justify-content: center;
+  transition: opacity 0.2s ease, transform 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+  opacity: 0;
+  transform: translateX(16px);
+  pointer-events: none;
+}
+
+.graveyard[data-visible='true'] {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+.graveyard[data-hover='true'] {
+  border-color: rgba(210, 64, 92, 0.8);
+  background: rgba(26, 12, 18, 0.9);
+}
+
+.graveMark {
+  font-size: 16px;
+  letter-spacing: 0.14em;
+}
+
+.graveLabel {
+  font-size: 12px;
+  color: #ffb3bd;
+}
+
+.dragPreview {
+  pointer-events: none;
+  position: fixed;
+  top: -9999px;
+  left: -9999px;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #0f1a2a;
+  border: 2px solid #4874ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 14px 28px rgba(4, 8, 15, 0.5);
+  overflow: hidden;
+}
+
+.dragPreviewImage {
+  width: 58px;
+  height: 58px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.evolveOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 8, 15, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 1600;
+}
+
+.evolveCard {
+  width: min(360px, 90vw);
+  background: #0d1520;
+  border-radius: 14px;
+  border: 1px solid #1f2a3a;
+  padding: 28px 26px;
+  color: #f2f4f7;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 24px 60px rgba(4, 8, 15, 0.55);
+  text-align: center;
+}
+
+.evolveCard h3 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.evolveHint {
+  margin: 0;
+  font-size: 14px;
+  color: #c0ccde;
+}
+
+.evolvePreview {
+  width: 92px;
+  height: 92px;
+  align-self: center;
+  border-radius: 16px;
+  background: rgba(15, 26, 42, 0.85);
+  padding: 12px;
+  border: 1px solid rgba(73, 118, 175, 0.35);
+  image-rendering: pixelated;
+}
+
+.evolveActions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.evolveCancelButton,
+.evolveConfirmButton {
+  flex: 1;
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
+}
+
+.evolveCancelButton {
+  background: transparent;
+  border-color: #30405a;
+  color: #cbd7eb;
+}
+
+.evolveCancelButton:hover {
+  background: #1b2738;
+}
+
+.evolveConfirmButton {
+  background: linear-gradient(135deg, #4874ff, #7a92ff);
+  color: #0b1024;
+  box-shadow: 0 6px 16px rgba(72, 116, 255, 0.25);
+}
+
+.evolveConfirmButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+@media (max-width: 720px) {
+  .partyDock {
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 16px;
+    width: min(100vw - 24px, 600px);
+  }
+
+  .dockContent {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .slotRow {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
+  }
+
+  .graveyard {
+    flex: 1 1 auto;
+    width: 100%;
+    transform: translateY(10px);
+  }
+
+  .graveyard[data-visible='true'] {
+    transform: translateY(0);
+  }
+
+  .slotCircle {
+    --circle-size: 64px;
+  }
+
+  .slotSprite {
+    width: 50px;
+    height: 50px;
+  }
+}
