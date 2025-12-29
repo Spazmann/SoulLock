@@ -1,29 +1,16 @@
 import { useId, useState, type ChangeEvent } from 'react';
-import type { GameSeriesId, VanillaMode } from '../types';
+import type { VanillaMode } from '../types';
+import { GAME_GROUPS, ROOM_SUPPORTED_GAME_IDS, getGameGroupForGameId } from '../constants/games';
 import styles from './RoomSettings.module.css';
 
 interface RoomSettingsProps {
-  gameSeries: GameSeriesId;
   vanillaMode: VanillaMode;
-  onGameSeriesChange: (series: GameSeriesId) => void;
+  roomGameId: string | null;
   onVanillaChange: (mode: VanillaMode) => void;
+  onRoomGameChange: (gameId: string) => void;
+  variant?: 'popover' | 'inline';
+  showGamePicker?: boolean;
 }
-
-const GAME_SERIES_OPTIONS: Array<{
-  id: GameSeriesId;
-  label: string;
-  disabled?: boolean;
-}> = [
-  {
-    id: 'oras',
-    label: 'Pokémon Omega Ruby & Pokémon Alpha Sapphire'
-  },
-  {
-    id: 'sword_shield',
-    label: 'Other Games',
-    disabled: true
-  }
-];
 
 const VANILLA_OPTIONS: Array<{
   id: VanillaMode;
@@ -33,10 +20,17 @@ const VANILLA_OPTIONS: Array<{
   { id: 'randomizer', label: 'Randomizer' }
 ];
 
-const RoomSettings = ({ gameSeries, vanillaMode, onGameSeriesChange, onVanillaChange }: RoomSettingsProps) => {
+const RoomSettings = ({
+  vanillaMode,
+  roomGameId,
+  onVanillaChange,
+  onRoomGameChange,
+  variant = 'popover',
+  showGamePicker = true
+}: RoomSettingsProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const panelTitleId = useId();
-  const gameSeriesSelectId = useId();
+  const roomGameSelectId = useId();
   const vanillaFieldsetId = useId();
   const handleToggle = () => {
     setIsOpen((previous) => !previous);
@@ -44,19 +38,6 @@ const RoomSettings = ({ gameSeries, vanillaMode, onGameSeriesChange, onVanillaCh
 
   const handleClose = () => {
     setIsOpen(false);
-  };
-
-  const handleGameSeriesChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    const value = event.target.value as GameSeriesId;
-    if (value === gameSeries) {
-      return;
-    }
-
-    if (GAME_SERIES_OPTIONS.find((option) => option.id === value && option.disabled)) {
-      return;
-    }
-
-    onGameSeriesChange(value);
   };
 
   const handleVanillaChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -68,68 +49,123 @@ const RoomSettings = ({ gameSeries, vanillaMode, onGameSeriesChange, onVanillaCh
     onVanillaChange(value);
   };
 
-  return (
-    <div className={styles.wrapper}>
-      <button
-        type="button"
-        className={styles.trigger}
-        aria-haspopup="dialog"
-        aria-expanded={isOpen}
-        onClick={handleToggle}
-      >
-        Room settings
-      </button>
+  const handleRoomGameChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    const groupId = event.target.value;
+    if (!groupId) {
+      return;
+    }
 
-      {isOpen && (
-        <div className={styles.panel} role="dialog" aria-modal="false" aria-labelledby={panelTitleId}>
-          <div className={styles.panelHeader}>
-            <h3 id={panelTitleId}>Room settings</h3>
-            <button type="button" className={styles.closeButton} onClick={handleClose}>
-              Close
-            </button>
-          </div>
+    const group = GAME_GROUPS.find((entry) => entry.id === groupId) ?? null;
+    if (!group) {
+      return;
+    }
 
-          <div className={styles.fieldGroup}>
-            <label htmlFor={gameSeriesSelectId} className={styles.fieldLabel}>
-              Game series
-            </label>
-            <select
-              id={gameSeriesSelectId}
-              className={styles.select}
-              value={gameSeries}
-              onChange={handleGameSeriesChange}
-            >
-              {GAME_SERIES_OPTIONS.map((option) => (
-                <option key={option.id} value={option.id} disabled={option.disabled}>
+    const nextGameId = group.defaultGameId;
+
+    if (nextGameId === roomGameId) {
+      return;
+    }
+
+    if (!ROOM_SUPPORTED_GAME_IDS.has(nextGameId as never)) {
+      return;
+    }
+
+    onRoomGameChange(nextGameId);
+  };
+
+  const panelContent = (
+    <div
+      className={`${styles.panel} ${variant === 'inline' ? styles.inlinePanel : ''}`}
+      role={variant === 'popover' ? 'dialog' : undefined}
+      aria-modal="false"
+      aria-labelledby={panelTitleId}
+    >
+      <div className={styles.panelHeader}>
+        <h3 id={panelTitleId}>Room settings</h3>
+        {variant === 'popover' && (
+          <button type="button" className={styles.closeButton} onClick={handleClose}>
+            Close
+          </button>
+        )}
+      </div>
+
+      {showGamePicker && (
+        <div className={styles.fieldGroup}>
+          <label htmlFor={roomGameSelectId} className={styles.fieldLabel}>
+            Pokémon game
+          </label>
+          <select
+            id={roomGameSelectId}
+            className={styles.select}
+            value={getGameGroupForGameId(roomGameId)?.id ?? ''}
+            onChange={handleRoomGameChange}
+          >
+            <option value="" disabled>
+              Select a game…
+            </option>
+            {GAME_GROUPS.map((option) => {
+              const supported = option.gameIds.some((id) => ROOM_SUPPORTED_GAME_IDS.has(id as never));
+              return (
+                <option key={option.id} value={option.id} disabled={!supported}>
                   {option.label}
-                  {option.disabled ? ' (coming soon)' : ''}
+                  {!supported ? ' (coming soon)' : ''}
                 </option>
-              ))}
-            </select>
-            <p className={styles.helperText}>Other Games support is coming soon.</p>
-          </div>
-
-          <fieldset className={styles.fieldGroup} aria-labelledby={vanillaFieldsetId}>
-            <legend id={vanillaFieldsetId} className={styles.fieldLabel}>
-              Vanilla gameplay
-            </legend>
-            <div className={styles.radioGroup}>
-              {VANILLA_OPTIONS.map((option) => (
-                <label key={option.id} className={styles.radioOption}>
-                  <input
-                    type="radio"
-                    name="vanilla-mode"
-                    value={option.id}
-                    checked={vanillaMode === option.id}
-                    onChange={handleVanillaChange}
-                  />
-                  <span>{option.label}</span>
-                </label>
-              ))}
-            </div>
-          </fieldset>
+              );
+            })}
+          </select>
+          <p className={styles.helperText}>More games will unlock as encounter tables are added.</p>
         </div>
       )}
+
+      <fieldset className={styles.fieldGroup} aria-labelledby={vanillaFieldsetId}>
+        <legend id={vanillaFieldsetId} className={styles.fieldLabel}>
+          Vanilla gameplay
+        </legend>
+        <div className={styles.radioGroup}>
+          {VANILLA_OPTIONS.map((option) => (
+            <label key={option.id} className={styles.radioOption}>
+              <input
+                type="radio"
+                name="vanilla-mode"
+                value={option.id}
+                checked={vanillaMode === option.id}
+                onChange={handleVanillaChange}
+              />
+              <span>{option.label}</span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+
+      {vanillaMode === 'randomizer' && (
+        <div className={styles.fieldGroup}>
+          <label className={styles.fieldLabel}>
+            Randomizer preset
+          </label>
+          <select className={styles.select} value="coming_soon" disabled>
+            <option value="coming_soon">Coming soon</option>
+          </select>
+          <p className={styles.helperText}>Randomizer configuration will be added next.</p>
+        </div>
+      )}
+    </div>
+  );
+
+  return (
+    <div className={styles.wrapper}>
+      {variant === 'popover' && (
+        <button
+          type="button"
+          className={styles.trigger}
+          aria-haspopup="dialog"
+          aria-expanded={isOpen}
+          onClick={handleToggle}
+        >
+          Room settings
+        </button>
+      )}
+
+      {variant === 'inline' ? panelContent : isOpen ? panelContent : null}
     </div>
   );
 };

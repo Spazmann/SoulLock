@@ -15,6 +15,174 @@
   border: 1px solid rgba(37, 49, 67, 0.65);
 }
 
+.setupOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  background: radial-gradient(circle at 8% 0%, rgba(243, 106, 167, 0.18), transparent 45%),
+    radial-gradient(circle at 92% 0%, rgba(102, 151, 255, 0.18), transparent 45%),
+    #050b16;
+}
+
+.setupShell {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.setupHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid rgba(37, 49, 67, 0.75);
+  background: rgba(11, 18, 31, 0.88);
+  backdrop-filter: blur(14px);
+}
+
+.setupHeaderActions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.setupExitButton {
+  padding: 0.55rem 1.25rem;
+}
+
+.setupTitle {
+  margin: 0;
+  font-size: 1.8rem;
+}
+
+.setupSubtitle {
+  margin: 0.35rem 0 0;
+  color: var(--color-text-muted);
+}
+
+.setupBody {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(280px, 360px) 1fr;
+  gap: 1.5rem;
+  padding: 1.5rem 2rem 5rem;
+  overflow: hidden;
+}
+
+.setupLeft {
+  display: flex;
+  align-items: flex-start;
+  overflow: auto;
+  padding-right: 0.25rem;
+}
+
+.setupRight {
+  overflow: auto;
+  padding-right: 0.25rem;
+}
+
+.gamePickerHeader {
+  background: var(--color-surface-elevated);
+  border: 1px solid rgba(37, 49, 67, 0.65);
+  border-radius: 1.25rem;
+  box-shadow: var(--shadow-soft);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.gamePickerTitle {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.gamePickerHint {
+  margin: 0.35rem 0 0;
+  color: var(--color-text-muted);
+}
+
+.gameGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.9rem;
+}
+
+.gameCard {
+  text-align: left;
+  background: var(--color-surface);
+  border: 1px solid rgba(37, 49, 67, 0.65);
+  border-radius: 1.25rem;
+  padding: 1rem 1.1rem;
+  box-shadow: var(--shadow-soft);
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.gameCard[data-selected='true'] {
+  border-color: var(--color-primary);
+}
+
+.gameCard[data-disabled='true'] {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.gameCard:disabled {
+  box-shadow: none;
+}
+
+.gameCardLabel {
+  font-weight: 700;
+}
+
+.gameCardMeta {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.setupSaveButton {
+  position: fixed;
+  right: 1.75rem;
+  bottom: 1.75rem;
+  background: var(--color-primary);
+  border: none;
+  color: #fff;
+  padding: 0.85rem 2rem;
+  border-radius: 999px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: var(--shadow-soft);
+  z-index: 1250;
+}
+
+.setupSaveButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 980px) {
+  .setupBody {
+    grid-template-columns: 1fr;
+    padding-bottom: 6rem;
+  }
+
+  .setupHeader {
+    padding: 1.25rem 1.25rem;
+  }
+
+  .setupBody {
+    padding: 1.25rem 1.25rem 6rem;
+  }
+
+  .setupSaveButton {
+    right: 1.25rem;
+    bottom: 1.25rem;
+  }
+}
+
 .container {
   display: flex;
   flex-direction: column;
