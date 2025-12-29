@@ -1,11 +1,13 @@
 import type { GameSeriesId } from '../types';
 import type { EncounterLocation } from '../constants/orasLocations';
 import { ORAS_ENCOUNTER_LOCATIONS } from '../constants/orasLocations';
+import { HGSS_ENCOUNTER_LOCATIONS } from '../constants/hgssLocations';
 
 type LocationIndex = Map<string, EncounterLocation>;
 
 const SERIES_LOCATIONS: Record<GameSeriesId, EncounterLocation[]> = {
   oras: ORAS_ENCOUNTER_LOCATIONS,
+  hgss: HGSS_ENCOUNTER_LOCATIONS,
   sword_shield: []
 };
 
@@ -14,6 +16,7 @@ const areaPokemonCache = new Map<string, Promise<string[]>>();
 
 const SERIES_ALLOWED_VERSIONS: Record<GameSeriesId, ReadonlySet<string> | null> = {
   oras: new Set(['omega-ruby', 'alpha-sapphire', 'ruby', 'sapphire', 'emerald']),
+  hgss: new Set(['heartgold', 'soulsilver']),
   sword_shield: new Set(['sword', 'shield'])
 };
 

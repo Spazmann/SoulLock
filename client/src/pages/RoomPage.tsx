@@ -9,6 +9,7 @@ import { buildRoomShareLink, getRoom } from '../api/rooms';
 import { useRoomConnection } from '../hooks/useRoomConnection';
 import { generateId } from '../utils/id';
 import { getClientId } from '../utils/clientId';
+import { GAME_GROUPS, ROOM_SUPPORTED_GAME_IDS, getGameGroupForGameId } from '../constants/games';
 import type {
   EncounterRow,
   GameSeriesId,
@@ -32,6 +33,10 @@ const RoomPage = () => {
   const [nameDraft, setNameDraft] = useState(DEFAULT_ROOM_NAME);
   const nameInputRef = useRef<HTMLInputElement | null>(null);
   const [isTrainerModalOpen, setIsTrainerModalOpen] = useState(false);
+  const [isSetupOverlayOpen, setIsSetupOverlayOpen] = useState(false);
+  const [draftRoomGameId, setDraftRoomGameId] = useState<string | null>(null);
+  const [draftVanillaMode, setDraftVanillaMode] = useState<VanillaMode>('standard');
+  const setupWasOpenRef = useRef(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -203,27 +208,16 @@ const RoomPage = () => {
     }));
   };
 
-  const handleUpdateGameSeries = (series: GameSeriesId) => {
-    if (!roomState) {
-      return;
-    }
-
-    syncState((previous) => ({
-      ...previous,
-      gameSeries: series,
-      encounters: []
-    }));
+  const handleDraftVanillaModeChange = (mode: VanillaMode) => {
+    setDraftVanillaMode(mode);
   };
 
-  const handleUpdateVanillaMode = (mode: VanillaMode) => {
-    if (!roomState) {
+  const handleDraftRoomGameChange = (gameId: string) => {
+    if (!ROOM_SUPPORTED_GAME_IDS.has(gameId as never)) {
       return;
     }
 
-    syncState((previous) => ({
-      ...previous,
-      vanillaMode: mode
-    }));
+    setDraftRoomGameId(gameId);
   };
 
   const openTrainerModal = () => {
@@ -799,6 +793,23 @@ const RoomPage = () => {
     });
   };
 
+  const requiresSetup = roomState ? roomState.isConfigured !== true : false;
+  const shouldShowSetupOverlay = Boolean(roomState) && (requiresSetup || isSetupOverlayOpen);
+
+  useEffect(() => {
+    if (!roomState) {
+      setupWasOpenRef.current = false;
+      return;
+    }
+
+    if (shouldShowSetupOverlay && !setupWasOpenRef.current) {
+      setDraftRoomGameId(roomState.roomGameId ?? null);
+      setDraftVanillaMode(roomState.vanillaMode);
+    }
+
+    setupWasOpenRef.current = shouldShowSetupOverlay;
+  }, [shouldShowSetupOverlay, roomState]);
+
   if (!roomId) {
     return <Navigate to="/" replace />;
   }
@@ -819,6 +830,147 @@ const RoomPage = () => {
 
   if (!roomState) {
     return <p className={styles.message}>Waiting for room sync…</p>;
+  }
+
+  const effectiveGameSeries: GameSeriesId =
+    roomState.roomGameId === 'omega_ruby' || roomState.roomGameId === 'alpha_sapphire'
+      ? 'oras'
+      : roomState.roomGameId === 'heartgold' || roomState.roomGameId === 'soulsilver'
+        ? 'hgss'
+        : roomState.gameSeries;
+
+  const canSaveSetup = Boolean(draftRoomGameId) && ROOM_SUPPORTED_GAME_IDS.has((draftRoomGameId ?? '') as never);
+  const settingsChanged =
+    (draftRoomGameId ?? null) !== (roomState.roomGameId ?? null) ||
+    draftVanillaMode !== roomState.vanillaMode;
+
+  const handleExitSetup = () => {
+    if (requiresSetup) {
+      return;
+    }
+
+    setIsSetupOverlayOpen(false);
+  };
+
+  const handleSaveSetup = () => {
+    if (!roomState || !canSaveSetup) {
+      return;
+    }
+
+    if (roomState.isConfigured === true && settingsChanged) {
+      const confirmed = window.confirm(
+        'Warning: Changing any room settings will remove all data from this room (trainers and encounters).\n\nContinue?'
+      );
+      if (!confirmed) {
+        return;
+      }
+    }
+
+    const nextSeries: GameSeriesId =
+      draftRoomGameId === 'omega_ruby' || draftRoomGameId === 'alpha_sapphire'
+        ? 'oras'
+        : draftRoomGameId === 'heartgold' || draftRoomGameId === 'soulsilver'
+          ? 'hgss'
+        : roomState.gameSeries;
+
+    syncState((previous) => {
+      const nextState = {
+        ...previous,
+        roomGameId: draftRoomGameId,
+        vanillaMode: draftVanillaMode,
+        gameSeries: nextSeries,
+        isConfigured: true
+      };
+
+      if (settingsChanged) {
+        return {
+          ...nextState,
+          players: [],
+          encounters: []
+        };
+      }
+
+      return nextState;
+    });
+
+    setIsSetupOverlayOpen(false);
+  };
+
+  if (shouldShowSetupOverlay) {
+    return (
+      <div className={styles.setupOverlay}>
+        <div className={styles.setupShell}>
+          <header className={styles.setupHeader}>
+            <div>
+              <h1 className={styles.setupTitle}>Room setup</h1>
+              <p className={styles.setupSubtitle}>Configure this room before entering. Room ID: {roomId}</p>
+            </div>
+            {roomState.isConfigured === true && (
+              <div className={styles.setupHeaderActions}>
+                <button
+                  type="button"
+                  className={`${styles.secondaryButton} ${styles.setupExitButton}`}
+                  onClick={handleExitSetup}
+                >
+                  Exit
+                </button>
+              </div>
+            )}
+          </header>
+
+          <div className={styles.setupBody}>
+            <section className={styles.setupLeft} aria-label="Room settings">
+              <RoomSettings
+                variant="inline"
+                showGamePicker={false}
+                vanillaMode={draftVanillaMode}
+                roomGameId={draftRoomGameId ?? null}
+                onRoomGameChange={handleDraftRoomGameChange}
+                onVanillaChange={handleDraftVanillaModeChange}
+              />
+            </section>
+
+            <section className={styles.setupRight} aria-label="Pick a Pokémon game">
+              <div className={styles.gamePickerHeader}>
+                <h2 className={styles.gamePickerTitle}>Pick your game</h2>
+                <p className={styles.gamePickerHint}>Only Omega Ruby / Alpha Sapphire are supported right now.</p>
+              </div>
+              <div className={styles.gameGrid}>
+                {GAME_GROUPS.map((group) => {
+                  const supported = group.gameIds.some((id) => ROOM_SUPPORTED_GAME_IDS.has(id as never));
+                  const selected = getGameGroupForGameId(draftRoomGameId)?.id === group.id;
+
+                  return (
+                    <button
+                      key={group.id}
+                      type="button"
+                      className={styles.gameCard}
+                      data-selected={selected}
+                      data-disabled={!supported}
+                      disabled={!supported}
+                      onClick={() => handleDraftRoomGameChange(group.defaultGameId)}
+                    >
+                      <span className={styles.gameCardLabel}>{group.label}</span>
+                      {!supported && <span className={styles.gameCardMeta}>Coming soon</span>}
+                      {supported && selected && <span className={styles.gameCardMeta}>Selected</span>}
+                    </button>
+                  );
+                })}
+              </div>
+            </section>
+          </div>
+
+          <button
+            type="button"
+            className={styles.setupSaveButton}
+            onClick={handleSaveSetup}
+            disabled={!canSaveSetup}
+          >
+            Save
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -873,12 +1025,13 @@ const RoomPage = () => {
             </button>
           </div>
           <div className={styles.settingsSlot}>
-            <RoomSettings
-              gameSeries={roomState.gameSeries}
-              vanillaMode={roomState.vanillaMode}
-              onGameSeriesChange={handleUpdateGameSeries}
-              onVanillaChange={handleUpdateVanillaMode}
-            />
+            <button
+              type="button"
+              className={styles.secondaryButton}
+              onClick={() => setIsSetupOverlayOpen(true)}
+            >
+              Room settings
+            </button>
             <button
               type="button"
               className={`${styles.secondaryButton} ${styles.manageTrainersButton}`}
@@ -893,7 +1046,7 @@ const RoomPage = () => {
       <div className={styles.mainContent}>
         <section className={styles.encountersSection}>
           <EncounterTable
-            gameSeries={roomState.gameSeries}
+            gameSeries={effectiveGameSeries}
             players={players}
             encounters={roomState.encounters ?? []}
             currentPlayerId={currentPlayerId}

@@ -34,6 +34,14 @@
   border: 1px solid rgba(37, 49, 67, 0.65);
 }
 
+.inlinePanel {
+  position: static;
+  top: auto;
+  right: auto;
+  width: 100%;
+  max-width: 420px;
+}
+
 .panelHeader {
   display: flex;
   justify-content: space-between;

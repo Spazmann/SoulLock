@@ -1,5 +1,5 @@
 export type PokemonStatus = 'active' | 'fainted' | 'boxed';
-export type GameSeriesId = 'oras' | 'sword_shield';
+export type GameSeriesId = 'oras' | 'hgss' | 'sword_shield';
 export type VanillaMode = 'standard' | 'randomizer';
 
 export interface PokemonEntry {
@@ -39,6 +39,8 @@ export interface RoomState {
   encounters: EncounterRow[];
   gameSeries: GameSeriesId;
   vanillaMode: VanillaMode;
+  roomGameId?: string | null;
+  isConfigured?: boolean;
   createdAt?: number;
   lastUpdatedAt?: number;
 }

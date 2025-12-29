@@ -11,7 +11,7 @@ const { getRoomsCollection, closeClient } = require('./db');
 
 const PORT = process.env.PORT || 4000;
 const ALLOWED_STATUSES = new Set(['active', 'fainted', 'boxed']);
-const ALLOWED_GAME_SERIES = new Set(['oras', 'sword_shield']);
+const ALLOWED_GAME_SERIES = new Set(['oras', 'hgss', 'sword_shield']);
 const ALLOWED_VANILLA_MODES = new Set(['standard', 'randomizer']);
 const DEFAULT_ROOM_NAME = 'Soul Lock Room';
 const MAX_ROOM_NAME_LENGTH = 80;
@@ -40,6 +40,8 @@ const createInitialState = () => ({
   encounters: [],
   gameSeries: 'oras',
   vanillaMode: 'standard',
+  roomGameId: null,
+  isConfigured: false,
   createdAt: Date.now(),
   lastUpdatedAt: Date.now()
 });
@@ -114,6 +116,23 @@ const sanitizeVanillaMode = (value, fallback = 'standard') => {
   return fallback;
 };
 
+const sanitizeRoomGameId = (value) => {
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    return trimmed ? trimmed.slice(0, 64) : null;
+  }
+
+  return null;
+};
+
+const sanitizeIsConfigured = (value, fallback = false) => {
+  if (typeof value === 'boolean') {
+    return value;
+  }
+
+  return fallback;
+};
+
 const sanitizeEncounterSelection = (value) => {
   if (value && typeof value === 'object' && !Array.isArray(value)) {
     const rawSpecies =
@@ -183,6 +202,11 @@ const sanitizeState = (incoming, previous) => {
     incoming?.vanillaMode ?? incoming?.vinnliaMode,
     base.vanillaMode ?? base.vinnliaMode ?? 'standard'
   );
+  const roomGameId =
+    sanitizeRoomGameId(incoming?.roomGameId ?? incoming?.gameId ?? incoming?.roomGame) ??
+    base.roomGameId ??
+    null;
+  const isConfigured = sanitizeIsConfigured(incoming?.isConfigured, base.isConfigured ?? false);
   const encounters = Array.isArray(incoming?.encounters)
     ? incoming.encounters.map((encounter) => sanitizeEncounter(encounter, players))
     : Array.isArray(base.encounters)
@@ -196,6 +220,8 @@ const sanitizeState = (incoming, previous) => {
     encounters,
     gameSeries,
     vanillaMode,
+    roomGameId,
+    isConfigured,
     lastUpdatedAt: Date.now()
   };
 };
@@ -345,7 +371,9 @@ wss.on('connection', (socket, req) => {
       vanillaMode: sanitizeVanillaMode(
         currentState.vanillaMode ?? currentState.vinnliaMode,
         'standard'
-      )
+      ),
+      roomGameId: sanitizeRoomGameId(currentState.roomGameId ?? currentState.gameId ?? currentState.roomGame),
+      isConfigured: sanitizeIsConfigured(currentState.isConfigured, true)
     };
 
     safeSend(socket, {
