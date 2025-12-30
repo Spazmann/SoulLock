@@ -13,6 +13,8 @@ const SERIES_LOCATIONS: Record<GameSeriesId, EncounterLocation[]> = {
 
 const locationIndexes = new Map<GameSeriesId, LocationIndex>();
 const areaPokemonCache = new Map<string, Promise<string[]>>();
+const seriesPokemonCache = new Map<GameSeriesId, Promise<string[]>>();
+let allSpeciesCache: Promise<string[]> | null = null;
 
 const SERIES_ALLOWED_VERSIONS: Record<GameSeriesId, ReadonlySet<string> | null> = {
   oras: new Set(['omega-ruby', 'alpha-sapphire', 'ruby', 'sapphire', 'emerald']),
@@ -114,6 +116,39 @@ export const getPokemonOptionsForLocation = (locationId: string | null, series: 
   }
 
   return areaPokemonCache.get(cacheKey) ?? Promise.resolve([]);
+};
+
+export const getPokemonOptionsForSeries = (series: GameSeriesId): Promise<string[]> => {
+  if (!seriesPokemonCache.has(series)) {
+    const locations = getEncounterLocations(series);
+    const loader = Promise.all(locations.map((location) => getPokemonOptionsForLocation(location.id, series)))
+      .then((lists) => {
+        const combined = new Set<string>();
+        lists.forEach((list) => list.forEach((name) => combined.add(name)));
+        return Array.from(combined).sort((a, b) => a.localeCompare(b));
+      })
+      .catch(() => []);
+    seriesPokemonCache.set(series, loader);
+  }
+
+  return seriesPokemonCache.get(series) ?? Promise.resolve([]);
+};
+
+export const getAllPokemonSpeciesOptions = (): Promise<string[]> => {
+  if (!allSpeciesCache) {
+    allSpeciesCache = fetch('https://pokeapi.co/api/v2/pokemon-species?limit=100000&offset=0')
+      .then(async (response) => {
+        if (!response.ok) {
+          throw new Error('Failed to load Pokémon species list');
+        }
+        const data: { results: Array<{ name: string }> } = await response.json();
+        const names = Array.isArray(data.results) ? data.results.map((entry) => entry.name).filter(Boolean) : [];
+        return Array.from(new Set(names)).sort((a, b) => a.localeCompare(b));
+      })
+      .catch(() => []);
+  }
+
+  return allSpeciesCache;
 };
 
 export const getLocationLabel = (locationId: string | null, series: GameSeriesId): string => {

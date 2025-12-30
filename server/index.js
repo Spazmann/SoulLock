@@ -12,7 +12,7 @@ const { getRoomsCollection, closeClient } = require('./db');
 const PORT = process.env.PORT || 4000;
 const ALLOWED_STATUSES = new Set(['active', 'fainted', 'boxed']);
 const ALLOWED_GAME_SERIES = new Set(['oras', 'hgss', 'sword_shield']);
-const ALLOWED_VANILLA_MODES = new Set(['standard', 'randomizer']);
+const ALLOWED_VANILLA_MODES = new Set(['standard', 'randomizer', 'multi_gen_randomizer']);
 const DEFAULT_ROOM_NAME = 'Soul Lock Room';
 const MAX_ROOM_NAME_LENGTH = 80;
 

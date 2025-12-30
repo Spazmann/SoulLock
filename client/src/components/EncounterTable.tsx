@@ -1,15 +1,16 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import type { ChangeEvent, DragEvent } from 'react';
-import type { EncounterRow, GameSeriesId, PlayerState } from '../types';
+import type { EncounterRow, GameSeriesId, PlayerState, VanillaMode } from '../types';
 import { getEncounterLocations, getLocationLabel, isValidLocationId } from '../api/encounters';
-import { useLocationPokemon } from '../hooks/useLocationPokemon';
+import { useEncounterPokemonOptions } from '../hooks/useEncounterPokemonOptions';
 import { PARTY_DRAG_TYPE } from '../constants/dragTypes';
 import { getCachedSprite, loadPokemonSprite, normalizeSpeciesKey } from '../utils/pokemonSprites';
 import styles from './EncounterTable.module.css';
 
 interface EncounterTableProps {
   gameSeries: GameSeriesId;
+  vanillaMode: VanillaMode;
   players: PlayerState[];
   encounters: EncounterRow[];
   currentPlayerId: string | null;
@@ -25,6 +26,7 @@ interface EncounterRowProps {
   encounter: EncounterRow;
   players: PlayerState[];
   gameSeries: GameSeriesId;
+  vanillaMode: VanillaMode;
   currentPlayerId: string | null;
   trainerColumnTemplate?: string;
   onRemove: (encounterId: string) => void;
@@ -38,6 +40,7 @@ const EncounterRowView = ({
   encounter,
   players,
   gameSeries,
+  vanillaMode,
   currentPlayerId,
   trainerColumnTemplate,
   onRemove,
@@ -50,7 +53,7 @@ const EncounterRowView = ({
     () => getLocationLabel(encounter.locationId, gameSeries),
     [encounter.locationId, gameSeries]
   );
-  const { options: pokemonOptions, status } = useLocationPokemon(encounter.locationId, gameSeries);
+  const { options: pokemonOptions, status } = useEncounterPokemonOptions(encounter.locationId, gameSeries, vanillaMode);
   const [hiddenSprites, setHiddenSprites] = useState<Record<string, boolean>>({});
   const [spriteMap, setSpriteMap] = useState<Record<string, string | null>>({});
   const [activeTrainerId, setActiveTrainerId] = useState<string | null>(null);
@@ -518,6 +521,7 @@ const EncounterRowView = ({
 
 const EncounterTable = ({
   gameSeries,
+  vanillaMode,
   players,
   encounters,
   currentPlayerId,
@@ -617,6 +621,7 @@ const EncounterTable = ({
               encounter={encounter}
               players={players}
               gameSeries={gameSeries}
+              vanillaMode={vanillaMode}
               currentPlayerId={currentPlayerId}
               trainerColumnTemplate={trainerColumnTemplate}
               onRemove={onRemoveEncounter}

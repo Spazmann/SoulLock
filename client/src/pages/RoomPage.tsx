@@ -1047,6 +1047,7 @@ const RoomPage = () => {
         <section className={styles.encountersSection}>
           <EncounterTable
             gameSeries={effectiveGameSeries}
+            vanillaMode={roomState.vanillaMode}
             players={players}
             encounters={roomState.encounters ?? []}
             currentPlayerId={currentPlayerId}

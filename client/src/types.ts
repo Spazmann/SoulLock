@@ -1,6 +1,6 @@
 export type PokemonStatus = 'active' | 'fainted' | 'boxed';
 export type GameSeriesId = 'oras' | 'hgss' | 'sword_shield';
-export type VanillaMode = 'standard' | 'randomizer';
+export type VanillaMode = 'standard' | 'randomizer' | 'multi_gen_randomizer';
 
 export interface PokemonEntry {
   id: string;

@@ -17,7 +17,8 @@ const VANILLA_OPTIONS: Array<{
   label: string;
 }> = [
   { id: 'standard', label: 'No randomizers' },
-  { id: 'randomizer', label: 'Randomizer' }
+  { id: 'randomizer', label: 'Randomizer' },
+  { id: 'multi_gen_randomizer', label: 'Multi-Gen Randomizer' }
 ];
 
 const RoomSettings = ({
@@ -137,7 +138,7 @@ const RoomSettings = ({
         </div>
       </fieldset>
 
-      {vanillaMode === 'randomizer' && (
+      {vanillaMode !== 'standard' && (
         <div className={styles.fieldGroup}>
           <label className={styles.fieldLabel}>
             Randomizer preset
